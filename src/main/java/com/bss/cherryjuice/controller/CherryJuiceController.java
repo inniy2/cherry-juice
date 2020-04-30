@@ -7,6 +7,7 @@ import lombok.ToString;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -26,6 +27,32 @@ public class CherryJuiceController {
     @RequestMapping(value="/api/getLock", method=RequestMethod.POST)
     public List<GhostLock> getLock(){ return this.mapper.lockSelectNotFree(); }
 
+    @RequestMapping(value="/api/requireLock", method=RequestMethod.POST)
+    public boolean requireLock(@RequestBody GhostLock lock){
+        GhostLock myLock  = this.mapper.lockSelectRequire(lock.getGhost_host(), lock.getUser_name());
+        if( myLock != null ){
+            myLock.setUser_name(lock.getUser_name());
+            myLock.setLock_status("reserved");
+            int cnt = this.mapper.lockUpdate(myLock);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @RequestMapping(value="/api/releaseLock", method=RequestMethod.POST)
+    public boolean releaseLock(@RequestBody GhostLock lock){
+        GhostLock myLock  = this.mapper.lockSelectRelease(lock.getGhost_host(), lock.getUser_name());
+        if( myLock != null ){
+            myLock.setUser_name("");
+            myLock.setLock_status("free");
+            int cnt = this.mapper.lockUpdate(myLock);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
 
 
@@ -44,6 +71,7 @@ class GhostLock {
     private String lock_status;
 }
 
+
 @Mapper
 interface CherryJuiceMapper {
     @Select("SELECT user_id, user_name, password FROM ghost_user WHERE user_name = #{user_name}")
@@ -51,6 +79,16 @@ interface CherryJuiceMapper {
 
     @Select("SELECT lock_id, ghost_host, user_name, lock_status FROM ghost_lock WHERE lock_status != 'free'")
     List<GhostLock> lockSelectNotFree();
+
+    @Select("SELECT lock_id, ghost_host, user_name, lock_status FROM ghost_lock WHERE ghost_host = #{ghost_host} AND (lock_status = 'free' OR user_name = #{user_name}) ")
+    GhostLock lockSelectRequire(@Param("ghost_host") String ghost_host, @Param("user_name") String user_name);
+
+    @Select("SELECT lock_id, ghost_host, user_name, lock_status FROM ghost_lock WHERE ghost_host = #{ghost_host} AND lock_status != 'free' AND user_name = #{user_name} ")
+    GhostLock lockSelectRelease(@Param("ghost_host") String ghost_host, @Param("user_name") String user_name);
+
+    @Update("Update ghost_lock set ghost_host = #{ghost_host}, user_name = #{user_name}, lock_status = #{lock_status} WHERE lock_id = #{lock_id}")
+    int lockUpdate(GhostLock lock);
+
 }
 
 
