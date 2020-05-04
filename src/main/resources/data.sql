@@ -6,6 +6,8 @@ insert into ghost_lock (lock_id, ghost_host, user_name, lock_status) values (1, 
 insert into ghost_lock (lock_id, ghost_host, user_name, lock_status) values (2, '127.0.0.1', 'mango', 'reserved');
 insert into ghost_lock (lock_id, ghost_host, user_name, lock_status) values (3, '192.168.33.12', '', 'free');
 insert into ghost_lock (lock_id, ghost_host, user_name, lock_status) values (4, '192.168.33.13', '', 'free');
+insert into ghost_lock (lock_id, ghost_host, user_name, lock_status) values (5, '10.145.239.36', '', 'free'); --u2
+
 
 
 --insert into dash_board (dash_board_id, ghost_host, table_schema, table_definition, statement, start_time, user_id, status) values (1,'localhost','test','test_tbl2','add column a int','2020-01-20 23:00:00', 'orange', 'cut-over');

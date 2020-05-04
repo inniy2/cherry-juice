@@ -22,7 +22,7 @@ CREATE TABLE `test_tbl1` (
   `b` int DEFAULT NULL,
   `c` int DEFAULT NULL,
   PRIMARY KEY (`a`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+);
 
 
 drop table if exists _test_tbl1_ghc;
