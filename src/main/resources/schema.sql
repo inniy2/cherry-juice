@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS `test`.`ghost_lock`;
 CREATE TABLE `test`.`ghost_lock` (
   `lock_id` int unsigned not null auto_increment,
   `ghost_host` varchar(20) not null,
+  `envoy_port` varchar(5) not null,
   `user_name` varchar(20) not null,
   `lock_status` varchar(20) not null,
 primary key(`lock_id`),

@@ -67,6 +67,7 @@ class GhostUser {
 class GhostLock {
     private long lock_id;
     private String ghost_host;
+    private String envoy_port;
     private String user_name;
     private String lock_status;
 }
@@ -77,13 +78,13 @@ interface CherryJuiceMapper {
     @Select("SELECT user_id, user_name, password FROM ghost_user WHERE user_name = #{user_name}")
     GhostUser userSelectByUserName(@Param("user_name") String user_name);
 
-    @Select("SELECT lock_id, ghost_host, user_name, lock_status FROM ghost_lock WHERE lock_status != 'free'")
+    @Select("SELECT lock_id, ghost_host, envoy_port, user_name, lock_status FROM ghost_lock WHERE lock_status != 'free'")
     List<GhostLock> lockSelectNotFree();
 
-    @Select("SELECT lock_id, ghost_host, user_name, lock_status FROM ghost_lock WHERE ghost_host = #{ghost_host} AND (lock_status = 'free' OR user_name = #{user_name}) ")
+    @Select("SELECT lock_id, ghost_host, envoy_port, user_name, lock_status FROM ghost_lock WHERE ghost_host = #{ghost_host} AND (lock_status = 'free' OR user_name = #{user_name}) ")
     GhostLock lockSelectRequire(@Param("ghost_host") String ghost_host, @Param("user_name") String user_name);
 
-    @Select("SELECT lock_id, ghost_host, user_name, lock_status FROM ghost_lock WHERE ghost_host = #{ghost_host} AND lock_status != 'free' AND user_name = #{user_name} ")
+    @Select("SELECT lock_id, ghost_host, envoy_port, user_name, lock_status FROM ghost_lock WHERE ghost_host = #{ghost_host} AND lock_status != 'free' AND user_name = #{user_name} ")
     GhostLock lockSelectRelease(@Param("ghost_host") String ghost_host, @Param("user_name") String user_name);
 
     @Update("Update ghost_lock set ghost_host = #{ghost_host}, user_name = #{user_name}, lock_status = #{lock_status} WHERE lock_id = #{lock_id}")
