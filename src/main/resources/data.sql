@@ -7,7 +7,7 @@ insert into ghost_lock (lock_id, ghost_host, envoy_port, user_name, lock_status)
 insert into ghost_lock (lock_id, ghost_host, envoy_port, user_name, lock_status) values (3, '192.168.33.12', '10000', '', 'free');
 insert into ghost_lock (lock_id, ghost_host, envoy_port, user_name, lock_status) values (4, '192.168.33.13', '10000', '', 'free');
 insert into ghost_lock (lock_id, ghost_host, envoy_port, user_name, lock_status) values (5, '10.145.239.38', '10001', '', 'free'); --u1
-insert into ghost_lock (lock_id, ghost_host, envoy_port, user_name, lock_status) values (6, '10.145.239.36', '10000', '', 'free'); --u2
+insert into ghost_lock (lock_id, ghost_host, envoy_port, user_name, lock_status) values (6, '10.145.239.36', '10000', 'apple', 'reserved'); --u2
 
 
 

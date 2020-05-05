@@ -53,6 +53,9 @@ public class CherryJuiceController {
         }
     }
 
+    @RequestMapping(value="/api/getGrpcPort", method=RequestMethod.POST)
+    public GhostLock getGrpcPort(@RequestBody GhostLock lock){ return this.mapper.lockSelectGrpcPort(lock.getGhost_host(), lock.getUser_name());}
+
 }
 
 
@@ -86,6 +89,9 @@ interface CherryJuiceMapper {
 
     @Select("SELECT lock_id, ghost_host, envoy_port, user_name, lock_status FROM ghost_lock WHERE ghost_host = #{ghost_host} AND lock_status != 'free' AND user_name = #{user_name} ")
     GhostLock lockSelectRelease(@Param("ghost_host") String ghost_host, @Param("user_name") String user_name);
+
+    @Select("SELECT lock_id, ghost_host, envoy_port, user_name, lock_status FROM ghost_lock WHERE ghost_host = #{ghost_host} AND user_name = #{user_name} ")
+    GhostLock lockSelectGrpcPort(@Param("ghost_host") String ghost_host, @Param("user_name") String user_name);
 
     @Update("Update ghost_lock set ghost_host = #{ghost_host}, user_name = #{user_name}, lock_status = #{lock_status} WHERE lock_id = #{lock_id}")
     int lockUpdate(GhostLock lock);
