@@ -24,6 +24,9 @@ public class CherryJuiceController {
     @RequestMapping(value="/api/getUser", method=RequestMethod.POST)
     public GhostUser getUser(@RequestBody GhostUser user){ return this.mapper.userSelectByUserName(user.getUser_name());}
 
+    @RequestMapping(value="/api/updatePassword", method=RequestMethod.POST)
+    public int updatePassword(@RequestBody GhostUser user){ return this.mapper.userUpdatePassword(user.getUser_name(), user.getPassword(), user.getNew_password());}
+
     @RequestMapping(value="/api/getLock", method=RequestMethod.POST)
     public List<GhostLock> getLock(){ return this.mapper.lockSelectNotFree(); }
 
@@ -64,6 +67,7 @@ class GhostUser {
     private long user_id;
     private String user_name;
     private String password;
+    private String new_password;
 }
 
 @Getter @Setter @NoArgsConstructor @ToString
@@ -80,6 +84,9 @@ class GhostLock {
 interface CherryJuiceMapper {
     @Select("SELECT user_id, user_name, password FROM ghost_user WHERE user_name = #{user_name}")
     GhostUser userSelectByUserName(@Param("user_name") String user_name);
+
+    @Update("Update ghost_user set password = #{new_password} WHERE user_name = #{user_name} AND password = #{password}")
+    int userUpdatePassword(@Param("user_name") String user_name, @Param("password") String password, @Param("new_password") String new_password);
 
     @Select("SELECT lock_id, ghost_host, envoy_port, user_name, lock_status FROM ghost_lock WHERE lock_status != 'free'")
     List<GhostLock> lockSelectNotFree();
