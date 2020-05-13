@@ -1,0 +1,22 @@
+[Unit]
+Description=cherry-juice
+After=syslog.target
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+PIDFile=/run/cherry-juice/cherry-juice.pid
+ExecStart=/usr/bin/java -Dspring.config.location=/etc/cherry-juice/application.properties  -jar /opt/cherry-juice/cherryjuice-0.0.1-SNAPSHOT.jar
+StandardOutput=file:/var/log/cherry-juice.log
+StandardError=file:/var/log/cherry-juice.log
+SyslogIdentifier=cherry-juice
+Restart=always
+TimeoutStartSec=10
+RestartSec=10
+
+
+
+[Install]
+WantedBy=multi-user.target

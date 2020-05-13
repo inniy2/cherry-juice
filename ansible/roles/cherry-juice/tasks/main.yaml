@@ -1,0 +1,61 @@
+---
+- name: set_fact
+  set_fact:
+    service_host: "{{ service_host }}"
+    service_port: "{{ service_port }}"
+    service_database: "{{ service_database }}"
+    user: "{{ user }}"
+    password: "{{ password }}"
+
+- name: Install apt packages
+  apt:
+    pkg:
+    - openjdk-11-jre
+    state: present
+
+- name: Create directories
+  file:
+    path: "{{ item.path }}"
+    state: "{{ item.state }}"
+    mode: "{{ item.mode }}"
+    owner: root
+    group: root
+  with_items:
+    - { path: '/etc/cherry-juice',          mode: '0755' , state: 'directory' }
+    - { path: '/run/cherry-juice',          mode: '0755' , state: 'directory' }
+    - { path: '/opt/cherry-juice',          mode: '0755' , state: 'directory' }
+    - { path: '/var/log/cherry-juice.log',  mode: '0644' , state: 'touch'     }
+
+- name: Create files
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: root
+    group: root
+  with_items:
+    - { src: '../target/cherryjuice-0.0.1-SNAPSHOT.jar', mode: '0644', dest: '/opt/cherry-juice/cherryjuice-0.0.1-SNAPSHOT.jar'  }
+    - { src: 'cherry-juice.service', mode: '0644', dest: '/lib/systemd/system/cherry-juice.service'  }
+
+- name: Create templates
+  vars:
+    service_host: "{{ service_host }}"
+    service_port: "{{ service_port }}"
+    service_database: "{{ service_database }}"
+    user: "{{ user }}"
+    password: "{{ password }}"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "{{ item.mode }}"
+    owner: root
+    group: root
+  with_items:
+    - { src: 'application.properties.j2', mode: '0644', dest: '/etc/cherry-juice/application.properties' }
+
+- name: restart service
+  systemd:
+    name: cherry-juice
+    state: restarted
+    enabled: yes
+    daemon_reload: yes
