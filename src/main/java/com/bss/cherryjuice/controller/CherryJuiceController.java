@@ -35,7 +35,7 @@ public class CherryJuiceController {
         GhostLock myLock  = this.mapper.lockSelectRequire(lock.getGhost_host(), lock.getUser_name());
         if( myLock != null ){
             myLock.setUser_name(lock.getUser_name());
-            myLock.setLock_status("reserved");
+            if(!myLock.getLock_status().equals("executed")) myLock.setLock_status("reserved");
             int cnt = this.mapper.lockUpdate(myLock);
             return true;
         }else{
@@ -49,6 +49,19 @@ public class CherryJuiceController {
         if( myLock != null ){
             myLock.setUser_name("");
             myLock.setLock_status("free");
+            int cnt = this.mapper.lockUpdate(myLock);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @RequestMapping(value="/api/executeLock", method=RequestMethod.POST)
+    public boolean executeLock(@RequestBody GhostLock lock){
+        GhostLock myLock  = this.mapper.lockSelectRelease(lock.getGhost_host(), lock.getUser_name());
+        if( myLock != null ){
+            myLock.setUser_name(lock.getUser_name());
+            myLock.setLock_status("executed");
             int cnt = this.mapper.lockUpdate(myLock);
             return true;
         }else{
